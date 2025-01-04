@@ -6,7 +6,7 @@ document.body.appendChild(canvas);
 var pixels = [];
 var step = 0;
 
-var colors = ["purple","green","blue","yellow","red","orange","pink","brown","gray","fuchsia","aqua","lime","maroon","navy","olive","silver","teal"];
+var colors = ["purple","pink","aqua","white","red","orange","green","brown","yellow","fuchsia","blue","lime","maroon","navy","olive","silver","teal"];
 var extdir = "LLRR";
 const ctx = canvas.getContext("2d");
 function ColorPixel(pozx, pozy, cycle){

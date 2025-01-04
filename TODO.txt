@@ -1,0 +1,3 @@
+-scroll canvas
+-add gui to change ADN and colors maybe
+-add placing ants as a feature

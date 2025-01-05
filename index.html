@@ -4,8 +4,20 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Langton's Ant</title>
+        <style>
+            body {
+                margin: 0; /* Remove default body margin */
+                padding: 0; /* Remove any default padding */
+                overflow: hidden; /* Prevent scrollbars if canvas fills the screen */
+            }
+    
+            canvas {
+                display: block; /* Remove inline-block gap in some browsers */
+                margin: 0; /* Ensure no extra margins */
+            }
+        </style>
     </head>
     <body style="background: black">
-        <script src="ObjectArray.js"></script>
+        <script type="module" src="OptimizedMap.js"></script>
     </body>
 </html>

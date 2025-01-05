@@ -1,3 +1,4 @@
+javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 const canvas = document.createElement("canvas");
 canvas.width = 1900;
 canvas.height = 900;
@@ -6,8 +7,10 @@ document.body.appendChild(canvas);
 var pixels = [];
 var step = 0;
 
+var GridSize =1;
+
 var colors = ["black","pink","aqua","white","red","blue","green","orange","yellow","fuchsia","brown","lime","maroon","navy","olive","silver","teal"];
-var extdir = "RRLLLRLLLRRR";
+var extdir = "LRRRRRLLR";
 const ctx = canvas.getContext("2d");
 function ColorPixel(pozx, pozy, cycle){
     let pixel = {};
@@ -16,7 +19,7 @@ function ColorPixel(pozx, pozy, cycle){
     pixel.cycle = cycle;
 
     ctx.fillStyle = colors[cycle];
-    ctx.fillRect(pozx, pozy, 5, 5);
+    ctx.fillRect(pozx, pozy, GridSize, GridSize);
 
     return pixel;
 }
@@ -57,12 +60,12 @@ function update(){
         pixels[rmpind].cycle += 1;
         if (pixels[rmpind].cycle > extdir.length - 1) {
             ctx.fillStyle = "black";
-            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, 5, 5);
+            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, GridSize, GridSize);
             RemovePixel(rmpind);
         } 
         else {
             ctx.fillStyle = colors[pixels[rmpind].cycle];
-            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, 5, 5);
+            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, GridSize, GridSize);
         }
         dir = (dir + 1) % 4;
     } 
@@ -71,29 +74,35 @@ function update(){
         pixels[rmpind].cycle += 1;
         if (pixels[rmpind].cycle > extdir.length - 1) {
             ctx.fillStyle = "black";
-            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, 5, 5);
+            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, GridSize, GridSize);
             RemovePixel(rmpind);
         } 
         else{
             ctx.fillStyle = colors[pixels[rmpind].cycle];
-            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, 5, 5);
+            ctx.fillRect(pixels[rmpind].x, pixels[rmpind].y, GridSize, GridSize);
         }
         dir = (dir + 3) % 4;
     }
     switch (dir) {
         case 0:
-        ant.x+=5;
+        ant.x+=GridSize;
         break;
         case 1:
-        ant.y+=5;
+        ant.y+=GridSize;
         break;
         case 2:
-        ant.x-=5;
+        ant.x-=GridSize;
         break;
         case 3:
-        ant.y-=5;
+        ant.y-=GridSize;
         break;
     }
-    setTimeout(update, 0);
 }
-update();
+
+function MaiMultPeMilisecunda(){
+    for(var i=1;i<=1000;i++){
+        update();
+    }
+    setTimeout(MaiMultPeMilisecunda, 0);
+}
+MaiMultPeMilisecunda();

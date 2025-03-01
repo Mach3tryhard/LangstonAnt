@@ -1,5 +1,6 @@
-javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
-import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm';
+javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='./build/stats.js';document.head.appendChild(script);})()
+import GUI from './build/lilgui.js';
+
 const canvas = document.createElement("canvas");
 canvas.width = 1900;
 canvas.height = 900;

@@ -45,42 +45,40 @@ settings.add(obj, "States", 1, 16, 1);
 settings.add(obj, "ColorsUsed", 1, 16, 1);
 const IterationDisplay = settings.add(obj, "Iteration");
 
-const colorFolder = gui.addFolder("Color Vector");
 
+const colorFolder = gui.addFolder("Color Vector");
 let colorVector = [
-  [0.9, 0.1, 0.3],
-  [0.96, 0.51, 0.19],
-  [1, 0.88, 0.1],
-  [0.75, 0.94, 0.27],
-  [0.24, 0.71, 0.29],
-  [0.26, 0.83, 0.96],
-  [0.26, 0.39, 0.85],
-  [0.57, 0.12, 0.71],
-  [0.94, 0.2, 0.9],
-  [0.66, 0.66, 0.66],
+  [0.9019607843137255, 0.09803921568627451, 0.29411764705882354],
+  [0.9607843137254902, 0.5098039215686274, 0.19215686274509805],
+  [1, 0.8823529411764706, 0.09803921568627451],
+  [0.7490196078431373, 0.9372549019607843, 0.27058823529411763],
+  [0.23529411764705882, 0.7058823529411765, 0.29411764705882354],
+  [0.25882352941176473, 0.8313725490196079, 0.9568627450980393],
+  [0.2627450980392157, 0.38823529411764707, 0.8470588235294118],
+  [0.5686274509803921, 0.11764705882352941, 0.7058823529411765],
+  [0.9411764705882353, 0.19607843137254902, 0.9019607843137255],
+  [0.6627450980392157, 0.6627450980392157, 0.6627450980392157],
   [1, 1, 1],
-  [0.5, 0, 0], // maroon
-  [0.6, 0.39, 0.14], // brown
-  [0.5, 0.5, 0], // olive
-  [0.27, 0.6, 0.56], // teal
-  [0, 0, 0.46], // navy
+  [0.5019607843137255, 0, 0],
+  [0.6039215686274509, 0.38823529411764707, 0.1411764705882353],
+  [0.5019607843137255, 0.5019607843137255, 0],
+  [0.27450980392156865, 0.6, 0.5647058823529412],
+  [0, 0, 0.4588235294117647],
 ];
 
 let colors = structuredClone(colorVector);
-
 function updateSyncedVector() {
   colors = structuredClone(colorVector);
 }
-
 colorVector.forEach((_, index) => {
   colorFolder
     .addColor(colorVector, index)
     .name(`Color ${index + 1}`)
     .onChange(updateSyncedVector);
 });
-
 colorFolder.open();
 updateSyncedVector();
+
 
 const fisier6 = gui.addFolder("Type");
 fisier6.add(obj, "LangstonAnt");
@@ -90,7 +88,7 @@ const ctx = canvas.getContext("2d");
 const gridWidth = Math.floor(canvas.width / obj.GridSize);
 const gridHeight = Math.floor(canvas.height / obj.GridSize);
 const state = new Uint16Array(gridWidth * gridHeight);
-const ant = { x: 950, y: 460, dir: 0, state: 0 };
+const ant = {x: window.innerWidth/2, y: window.innerHeight/2, dir: 0, state: 0 };
 
 let step = 0;
 
@@ -115,63 +113,58 @@ function update() {
   const row = Math.floor(ant.y / obj.GridSize);
   const index = row * gridWidth + col;
 
-  // Use the ant's internal state rather than the cell's state for the rule lookup.
   const currentState = ant.state;
-  const currentColor = state[index]; // cell stores only a color
+  const currentColor = state[index];
 
-  // Find the corresponding rule from the predefinedTurnTable
   const rule = predefinedTurnTable.find(
     (r) => r.state === currentState && r.color === currentColor,
   );
 
-  if (!rule) return; // If no matching rule is found, skip the step
+  if (!rule) return;
 
-  // Update the cell's color and the ant's internal state separately.
-  state[index] = rule.newColor; // store new color in cell
-  ant.state = rule.newState; // update ant's internal state
+  state[index] = rule.newColor;
+  ant.state = rule.newState;
 
-  // Draw the new color.
   const [r, g, b] = colors[rule.newColor].map((v) => Math.round(v * 255));
   ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
   ctx.fillRect(ant.x, ant.y, obj.GridSize, obj.GridSize);
 
-  // Update ant direction based on the rule.
   switch (rule.turn) {
     case "L":
-      ant.dir = (ant.dir + 3) % 4; // turn left
+      ant.dir = (ant.dir + 3) % 4;
       break;
     case "R":
-      ant.dir = (ant.dir + 1) % 4; // turn right
+      ant.dir = (ant.dir + 1) % 4;
       break;
     case "U":
-      ant.dir = (ant.dir + 2) % 4; // U-turn (reverse direction)
+      ant.dir = (ant.dir + 2) % 4;
       break;
     case "N":
-      // No turn, keep moving in the same direction
       break;
   }
 
-  // Update the ant's position based on its direction.
   switch (ant.dir) {
     case 0:
-      ant.y -= obj.GridSize; // up
+      if (ant.x + obj.GridSize < canvas.width) ant.x += obj.GridSize;
+      //else obj.Play = false;
       break;
     case 1:
-      ant.x += obj.GridSize; // right
+      if (ant.y + obj.GridSize < canvas.height) ant.y += obj.GridSize;
+      //else obj.Play = false;
       break;
     case 2:
-      ant.y += obj.GridSize; // down
+      if (ant.x - obj.GridSize >= 0) ant.x -= obj.GridSize;
+      //else obj.Play = false;
       break;
     case 3:
-      ant.x -= obj.GridSize; // left
+      if (ant.y - obj.GridSize >= 0) ant.y -= obj.GridSize;
+      //else obj.Play = false;
       break;
   }
 
-  // Ensure the ant wraps around the canvas edges.
   ant.x = (ant.x + canvas.width) % canvas.width;
   ant.y = (ant.y + canvas.height) % canvas.height;
 
-  // Update iteration display.
   if (step > 1000000000 && step % 1000000 == 0)
     UpdateDisplayIteration(step / 1000000000 + "B");
   else if (step > 1000000 && step % 1000 == 0)

@@ -14,8 +14,8 @@ javascript: (function () {
 import GUI from "./build/lilgui.js";
 
 const canvas = document.createElement("canvas");
-canvas.width = 1900;
-canvas.height = 900;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 document.body.appendChild(canvas);
 
 const gui = new GUI();
@@ -26,6 +26,12 @@ const obj = {
   ADN: "LLRR",
   Play: false,
   Iteration: 0,
+  LangstonAnt: function () {
+    window.location.href = "langstonant.html";
+  },
+  Turmite: function () {
+    window.location.href = "turmite.html";
+  },
 };
 const fisier3 = gui.addFolder("Settings");
 fisier3.add(obj, "Play");
@@ -40,9 +46,8 @@ fisier3.add(obj, "Speed", 1, 250, 1);
 fisier3.add(obj, "SpeedMultiplier", 1, 100000, 1);
 const IterationDisplay = fisier3.add(obj, "Iteration");
 
-const colorFolder = gui.addFolder("Color Vector");
 
-// Define an initial vector of colors
+const colorFolder = gui.addFolder("Color Vector");
 let colorVector = [
   [0.9019607843137255, 0.09803921568627451, 0.29411764705882354],
   [0.9607843137254902, 0.5098039215686274, 0.19215686274509805],
@@ -55,35 +60,29 @@ let colorVector = [
   [0.9411764705882353, 0.19607843137254902, 0.9019607843137255],
   [0.6627450980392157, 0.6627450980392157, 0.6627450980392157],
   [1, 1, 1],
-  [0.5019607843137255, 0, 0], //maroon
-  [0.6039215686274509, 0.38823529411764707, 0.1411764705882353], //brown
-  [0.5019607843137255, 0.5019607843137255, 0], //olive
-  [0.27450980392156865, 0.6, 0.5647058823529412], //teal
-  [0, 0, 0.4588235294117647], //navy
+  [0.5019607843137255, 0, 0],
+  [0.6039215686274509, 0.38823529411764707, 0.1411764705882353],
+  [0.5019607843137255, 0.5019607843137255, 0],
+  [0.27450980392156865, 0.6, 0.5647058823529412],
+  [0, 0, 0.4588235294117647],
 ];
-
-// Define another vector that will be updated in real-time
 let colors = structuredClone(colorVector);
-
-// Function to sync colors
 function updateSyncedVector() {
-  colors = structuredClone(colorVector); // Deep copy to avoid reference issues
+  colors = structuredClone(colorVector);
   console.log("Updated Synced Vector:", colors);
 }
-
-// Add GUI controls inside the folder
 colorVector.forEach((_, index) => {
   colorFolder
     .addColor(colorVector, index)
     .name(`Color ${index + 1}`)
     .onChange(updateSyncedVector);
 });
-
-// Open folder by default (optional)
 colorFolder.open();
-
-// Initialize update
 updateSyncedVector();
+
+const fisier6 = gui.addFolder("Type");
+fisier6.add(obj, "LangstonAnt");
+fisier6.add(obj, "Turmite");
 
 const ctx = canvas.getContext("2d");
 
@@ -93,7 +92,7 @@ const state = new Uint8Array(gridWidth * gridHeight);
 
 var extdir = obj.ADN;
 
-const ant = { x: 950, y: 460, dir: 3 };
+const ant = { x: window.innerWidth/2, y: window.innerHeight/2, dir: 3 };
 
 let step = 0;
 
@@ -132,29 +131,21 @@ function update() {
     ant.dir = (ant.dir + 3) % 4;
   }
 
-  // Move the ant based on its direction, but stop if it reaches the edge
   switch (ant.dir) {
     case 0:
-      if (ant.x + obj.GridSize < canvas.width) {
-        ant.x += obj.GridSize;
-      }
+      ant.x += obj.GridSize;
       break;
     case 1:
-      if (ant.y + obj.GridSize < canvas.height) {
-        ant.y += obj.GridSize;
-      }
+      ant.y += obj.GridSize;
       break;
     case 2:
-      if (ant.x - obj.GridSize >= 0) {
-        ant.x -= obj.GridSize;
-      }
+      ant.x -= obj.GridSize;
       break;
     case 3:
-      if (ant.y - obj.GridSize >= 0) {
-        ant.y -= obj.GridSize;
-      }
+      ant.y -= obj.GridSize;
       break;
   }
+
 }
 
 function MaiMultPeMilisecunda() {
@@ -166,3 +157,8 @@ function MaiMultPeMilisecunda() {
   setTimeout(MaiMultPeMilisecunda, 1000 / obj.Speed);
 }
 MaiMultPeMilisecunda();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});

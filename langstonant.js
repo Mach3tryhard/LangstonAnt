@@ -26,6 +26,12 @@ const obj = {
   ADN: "LLRR",
   Play: false,
   Iteration: 0,
+  LangstonAnt: function () {
+    window.location.href = "langstonant.html";
+  },
+  Turmite: function () {
+    window.location.href = "turmite.html";
+  },
 };
 const fisier3 = gui.addFolder("Settings");
 const ruleFolder = gui.addFolder("Rules");

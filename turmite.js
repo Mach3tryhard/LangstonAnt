@@ -28,6 +28,12 @@ const obj = {
   ColorsUsed: 2,
   Play: false,
   Iteration: 0,
+  LangstonAnt: function () {
+    window.location.href = "langstonant.html";
+  },
+  Turmite: function () {
+    window.location.href = "turmite.html";
+  },
 };
 
 const settings = gui.addFolder("Settings");
@@ -75,6 +81,9 @@ colorVector.forEach((_, index) => {
 
 colorFolder.open();
 updateSyncedVector();
+
+const fisier6 = gui.addFolder("Types");
+fisier6.add(obj, "Types");
 
 const ctx = canvas.getContext("2d");
 const gridWidth = Math.floor(canvas.width / obj.GridSize);

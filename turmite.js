@@ -82,8 +82,9 @@ colorVector.forEach((_, index) => {
 colorFolder.open();
 updateSyncedVector();
 
-const fisier6 = gui.addFolder("Types");
-fisier6.add(obj, "Types");
+const fisier6 = gui.addFolder("Type");
+fisier6.add(obj, "LangstonAnt");
+fisier6.add(obj, "Turmite");
 
 const ctx = canvas.getContext("2d");
 const gridWidth = Math.floor(canvas.width / obj.GridSize);

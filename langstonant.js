@@ -20,7 +20,7 @@ document.body.appendChild(canvas);
 
 const gui = new GUI();
 const obj = {
-  GridSize: 1,
+  GridSize: 5,
   Speed: 250,
   SpeedMultiplier: 1,
   ADN: "LLRR",
@@ -92,6 +92,10 @@ colorFolder.open();
 // Initialize update
 updateSyncedVector();
 
+const fisier6 = gui.addFolder("Type");
+fisier6.add(obj, "LangstonAnt");
+fisier6.add(obj, "Turmite");
+
 const ctx = canvas.getContext("2d");
 
 const gridWidth = Math.floor(canvas.width / obj.GridSize);
@@ -125,31 +129,6 @@ function generateRules() {
       predefinedTurnTable.push(rule);
     }
   }
-  updateRuleGUI();
-}
-
-function updateRules() {
-  generateRules();
-}
-
-function updateRuleGUI() {
-  // Remove any previous rule GUI elements
-  const ruleFolder = gui.__folders["Turn Table"];
-  if (ruleFolder) ruleFolder.__ul.innerHTML = "";
-
-  const ruleFolder = gui.addFolder("Turn Table");
-
-  // Add GUI controls for each rule dynamically
-  predefinedTurnTable.forEach((rule, index) => {
-    const folder = ruleFolder.addFolder(
-      `Rule ${index + 1}: State ${rule.state} & Color ${rule.color}`,
-    );
-    folder.add(rule, "newColor", 0, obj.ColorsUsed - 1, 1).name("New Color");
-    folder.add(rule, "turn", ["R", "L", "U", "N"]).name("Turn");
-    folder.add(rule, "newState", 0, obj.States - 1, 1).name("New State");
-  });
-
-  ruleFolder.open();
 }
 
 generateRules();

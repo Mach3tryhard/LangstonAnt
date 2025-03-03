@@ -28,6 +28,7 @@ const obj = {
   Iteration: 0,
 };
 const fisier3 = gui.addFolder("Settings");
+const ruleFolder = gui.addFolder("Rules");
 fisier3.add(obj, "Play");
 fisier3.add(obj, "ADN").onChange(() => {
   extdir = obj.ADN;
@@ -101,6 +102,51 @@ function UpdateDisplayIteration(afisStep) {
   IterationDisplay.setValue(afisStep);
   IterationDisplay.updateDisplay();
 }
+
+let predefinedTurnTable = [];
+
+function generateRules() {
+  predefinedTurnTable = [];
+  for (let state = 0; state < obj.States; state++) {
+    for (let color = 0; color < obj.ColorsUsed; color++) {
+      const rule = {
+        state: state,
+        color: color,
+        newColor: 0, // initial value for newColor
+        turn: "R", // initial value for turn
+        newState: 0, // initial value for newState
+      };
+      predefinedTurnTable.push(rule);
+    }
+  }
+  updateRuleGUI();
+}
+
+function updateRules() {
+  generateRules();
+}
+
+function updateRuleGUI() {
+  // Remove any previous rule GUI elements
+  const ruleFolder = gui.__folders["Turn Table"];
+  if (ruleFolder) ruleFolder.__ul.innerHTML = "";
+
+  const ruleFolder = gui.addFolder("Turn Table");
+
+  // Add GUI controls for each rule dynamically
+  predefinedTurnTable.forEach((rule, index) => {
+    const folder = ruleFolder.addFolder(
+      `Rule ${index + 1}: State ${rule.state} & Color ${rule.color}`,
+    );
+    folder.add(rule, "newColor", 0, obj.ColorsUsed - 1, 1).name("New Color");
+    folder.add(rule, "turn", ["R", "L", "U", "N"]).name("Turn");
+    folder.add(rule, "newState", 0, obj.States - 1, 1).name("New State");
+  });
+
+  ruleFolder.open();
+}
+
+generateRules();
 
 function update() {
   step += 1;

@@ -14,8 +14,8 @@ javascript: (function () {
 import GUI from "./build/lilgui.js";
 
 const canvas = document.createElement("canvas");
-canvas.width = 1900;
-canvas.height = 900;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 document.body.appendChild(canvas);
 
 const gui = new GUI();
@@ -166,3 +166,8 @@ function MaiMultPeMilisecunda() {
   setTimeout(MaiMultPeMilisecunda, 1000 / obj.Speed);
 }
 MaiMultPeMilisecunda();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});

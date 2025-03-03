@@ -1,5 +1,17 @@
-javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='./build/stats.js';document.head.appendChild(script);})()
-import GUI from './build/lilgui.js';
+javascript: (function () {
+  var script = document.createElement("script");
+  script.onload = function () {
+    var stats = new Stats();
+    document.body.appendChild(stats.dom);
+    requestAnimationFrame(function loop() {
+      stats.update();
+      requestAnimationFrame(loop);
+    });
+  };
+  script.src = "./build/stats.js";
+  document.head.appendChild(script);
+})();
+import GUI from "./build/lilgui.js";
 
 const canvas = document.createElement("canvas");
 canvas.width = 1900;
@@ -7,39 +19,85 @@ canvas.height = 900;
 document.body.appendChild(canvas);
 
 const gui = new GUI();
-const obj = { 
-    GridSize: 1,
-    Speed: 250,
-    SpeedMultiplier:1,
-    ADN:"LLRR",
-    Play:false,
-    Iteration:0,
+const obj = {
+  GridSize: 1,
+  Speed: 250,
+  SpeedMultiplier: 1,
+  ADN: "LLRR",
+  Play: false,
+  Iteration: 0,
 };
-
-const fisier3 = gui.addFolder('Settings');
-fisier3.add(obj,'Play');
-fisier3.add(obj,'ADN').onChange(() => {
+const fisier3 = gui.addFolder("Settings");
+fisier3.add(obj, "Play");
+fisier3.add(obj, "ADN").onChange(() => {
   extdir = obj.ADN;
+  gridSizeControl.disable(value);
+  adnControl.disable(value);
+  colorControls.forEach((control) => control.disable(value));
 });
-fisier3.add(obj,'GridSize',1,10,1);
-fisier3.add(obj,'Speed',1,250,1);
-fisier3.add(obj,'SpeedMultiplier',1,100000,1);
-const IterationDisplay = fisier3.add(obj,'Iteration');
+fisier3.add(obj, "GridSize", 1, 10, 1);
+fisier3.add(obj, "Speed", 1, 250, 1);
+fisier3.add(obj, "SpeedMultiplier", 1, 100000, 1);
+const IterationDisplay = fisier3.add(obj, "Iteration");
+
+const colorFolder = gui.addFolder("Color Vector");
+
+// Define an initial vector of colors
+let colorVector = [
+  [0.9019607843137255, 0.09803921568627451, 0.29411764705882354],
+  [0.9607843137254902, 0.5098039215686274, 0.19215686274509805],
+  [1, 0.8823529411764706, 0.09803921568627451],
+  [0.7490196078431373, 0.9372549019607843, 0.27058823529411763],
+  [0.23529411764705882, 0.7058823529411765, 0.29411764705882354],
+  [0.25882352941176473, 0.8313725490196079, 0.9568627450980393],
+  [0.2627450980392157, 0.38823529411764707, 0.8470588235294118],
+  [0.5686274509803921, 0.11764705882352941, 0.7058823529411765],
+  [0.9411764705882353, 0.19607843137254902, 0.9019607843137255],
+  [0.6627450980392157, 0.6627450980392157, 0.6627450980392157],
+  [1, 1, 1],
+  [0.5019607843137255, 0, 0], //maroon
+  [0.6039215686274509, 0.38823529411764707, 0.1411764705882353], //brown
+  [0.5019607843137255, 0.5019607843137255, 0], //olive
+  [0.27450980392156865, 0.6, 0.5647058823529412], //teal
+  [0, 0, 0.4588235294117647], //navy
+];
+
+// Define another vector that will be updated in real-time
+let colors = structuredClone(colorVector);
+
+// Function to sync colors
+function updateSyncedVector() {
+  colors = structuredClone(colorVector); // Deep copy to avoid reference issues
+  console.log("Updated Synced Vector:", colors);
+}
+
+// Add GUI controls inside the folder
+colorVector.forEach((_, index) => {
+  colorFolder
+    .addColor(colorVector, index)
+    .name(`Color ${index + 1}`)
+    .onChange(updateSyncedVector);
+});
+
+// Open folder by default (optional)
+colorFolder.open();
+
+// Initialize update
+updateSyncedVector();
 
 const ctx = canvas.getContext("2d");
 
-const gridWidth = canvas.width / obj.GridSize;
-const gridHeight = canvas.height / obj.GridSize;
+const gridWidth = Math.floor(canvas.width / obj.GridSize);
+const gridHeight = Math.floor(canvas.height / obj.GridSize);
 const state = new Uint8Array(gridWidth * gridHeight);
 
-const colors = ["#000000", "#ffffff", "#1e99e1", "#f641b2","red","blue","green","yellow","orange","brown","teal","aqua","Cornsilk","olive","magenta","pink"];
 var extdir = obj.ADN;
 
 const ant = { x: 950, y: 460, dir: 3 };
 
 let step = 0;
 
-function UpdateDisplayIteration(afisStep){
+function UpdateDisplayIteration(afisStep) {
   IterationDisplay.setValue(afisStep);
   IterationDisplay.updateDisplay();
 }
@@ -47,26 +105,25 @@ function UpdateDisplayIteration(afisStep){
 function update() {
   step += 1;
 
-  const col = ant.x / obj.GridSize;
-  const row = ant.y / obj.GridSize;
+  const col = Math.floor(ant.x / obj.GridSize);
+  const row = Math.floor(ant.y / obj.GridSize);
   const index = row * gridWidth + col;
-  if(step>1000000000  && step%1000000==0)
-    UpdateDisplayIteration(step/1000000000+"B");
-  else
-  if(step>1000000  && step%1000==0)
-    UpdateDisplayIteration(step/1000000+"M");
-  else
-  if(step>1000 && step%1000==0)
-    UpdateDisplayIteration(step/1000+"K");
-  else
-  if(step>0 && step<1000)
-    UpdateDisplayIteration(step);
+
+  if (step > 1000000000 && step % 1000000 == 0)
+    UpdateDisplayIteration(step / 1000000000 + "B");
+  else if (step > 1000000 && step % 1000 == 0)
+    UpdateDisplayIteration(step / 1000000 + "M");
+  else if (step > 1000 && step % 1000 == 0)
+    UpdateDisplayIteration(step / 1000 + "K");
+  else if (step > 0 && step < 1000) UpdateDisplayIteration(step);
 
   const CurrentColor = state[index];
   const nextColor = (CurrentColor + 1) % extdir.length;
   state[index] = nextColor;
 
-  ctx.fillStyle = colors[nextColor];
+  const [r, g, b] = colors[nextColor].map((v) => Math.round(v * 255));
+  ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+
   ctx.fillRect(ant.x, ant.y, obj.GridSize, obj.GridSize);
 
   if (extdir[CurrentColor] === "L") {
@@ -76,21 +133,29 @@ function update() {
   }
 
   switch (ant.dir) {
-    case 0: ant.x += obj.GridSize; break;
-    case 1: ant.y += obj.GridSize; break;
-    case 2: ant.x -= obj.GridSize; break;
-    case 3: ant.y -= obj.GridSize; break;
+    case 0:
+      ant.x += obj.GridSize;
+      break;
+    case 1:
+      ant.y += obj.GridSize;
+      break;
+    case 2:
+      ant.x -= obj.GridSize;
+      break;
+    case 3:
+      ant.y -= obj.GridSize;
+      break;
   }
 
   //setTimeout(update, 0);
 }
 
-function MaiMultPeMilisecunda(){
-  for(var i=1;i<=obj.SpeedMultiplier;i++){
-    if(obj.Play==true){
+function MaiMultPeMilisecunda() {
+  for (var i = 1; i <= obj.SpeedMultiplier; i++) {
+    if (obj.Play == true) {
       update();
     }
   }
-  setTimeout(MaiMultPeMilisecunda, 1000/obj.Speed);
+  setTimeout(MaiMultPeMilisecunda, 1000 / obj.Speed);
 }
 MaiMultPeMilisecunda();

@@ -35,7 +35,9 @@ const obj = {
     window.location.href = "turmite.html";
   },
 };
-
+const fisier6 = gui.addFolder("Type");
+fisier6.add(obj, "LangstonAnt");
+fisier6.add(obj, "Turmite");
 const settings = gui.addFolder("Settings");
 settings.add(obj, "Play");
 settings.add(obj, "GridSize", 1, 10, 1);
@@ -44,7 +46,6 @@ settings.add(obj, "SpeedMultiplier", 1, 100000, 1);
 settings.add(obj, "States", 1, 16, 1);
 settings.add(obj, "ColorsUsed", 1, 16, 1);
 const IterationDisplay = settings.add(obj, "Iteration");
-
 
 const colorFolder = gui.addFolder("Color Vector");
 let colorVector = [
@@ -79,16 +80,11 @@ colorVector.forEach((_, index) => {
 colorFolder.open();
 updateSyncedVector();
 
-
-const fisier6 = gui.addFolder("Type");
-fisier6.add(obj, "LangstonAnt");
-fisier6.add(obj, "Turmite");
-
 const ctx = canvas.getContext("2d");
 const gridWidth = Math.floor(canvas.width / obj.GridSize);
 const gridHeight = Math.floor(canvas.height / obj.GridSize);
 const state = new Uint16Array(gridWidth * gridHeight);
-const ant = {x: window.innerWidth/2, y: window.innerHeight/2, dir: 0, state: 0 };
+const ant = {x: Math.floor(window.innerWidth/2), y: Math.floor(window.innerHeight/2), dir: 0, state: 0 };
 
 let step = 0;
 
@@ -97,11 +93,17 @@ function UpdateDisplayIteration(afisStep) {
   IterationDisplay.updateDisplay();
 }
 
-const predefinedTurnTable = [
+/*const predefinedTurnTable = [
   { state: 0, color: 0, newColor: 1, turn: "R", newState: 0 },
   { state: 0, color: 1, newColor: 1, turn: "R", newState: 1 },
   { state: 1, color: 0, newColor: 0, turn: "N", newState: 0 },
   { state: 1, color: 1, newColor: 0, turn: "N", newState: 1 },
+];*/
+const predefinedTurnTable = [
+  { state: 0, color: 0, newColor: 1, newState: 1,turn: "L" },
+  { state: 0, color: 1, newColor: 1, newState: 0,turn: "R" },
+  { state: 1, color: 0, newColor: 0, newState: 1,turn: "R" },
+  { state: 1, color: 1, newColor: 1, newState: 0,turn: "R" },
 ];
 for (let i = 0; i < gridWidth * gridHeight; i++) {
   state[i] = 0;
@@ -109,6 +111,7 @@ for (let i = 0; i < gridWidth * gridHeight; i++) {
 
 function update() {
   step += 1;
+  
   const col = Math.floor(ant.x / obj.GridSize);
   const row = Math.floor(ant.y / obj.GridSize);
   const index = row * gridWidth + col;
@@ -119,7 +122,6 @@ function update() {
   const rule = predefinedTurnTable.find(
     (r) => r.state === currentState && r.color === currentColor,
   );
-
   if (!rule) return;
 
   state[index] = rule.newColor;

@@ -33,6 +33,10 @@ const obj = {
     window.location.href = "turmite.html";
   },
 };
+
+const fisier6 = gui.addFolder("Type");
+fisier6.add(obj, "LangstonAnt");
+fisier6.add(obj, "Turmite");
 const fisier3 = gui.addFolder("Settings");
 fisier3.add(obj, "Play");
 fisier3.add(obj, "ADN").onChange(() => {
@@ -79,10 +83,6 @@ colorVector.forEach((_, index) => {
 });
 colorFolder.open();
 updateSyncedVector();
-
-const fisier6 = gui.addFolder("Type");
-fisier6.add(obj, "LangstonAnt");
-fisier6.add(obj, "Turmite");
 
 const ctx = canvas.getContext("2d");
 

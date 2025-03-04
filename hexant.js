@@ -21,7 +21,7 @@ document.body.appendChild(canvas);
 
 const gui = new GUI();
 const obj = {
-  GridSize: 5,
+  ZoomLevel: 5,
   Speed: 60,
   SpeedMultiplier: 1,
   ADN: "L2NNL1L2L1",
@@ -78,7 +78,7 @@ fisier3.add(obj, "Play");
 fisier3.add(obj, "ADN").onChange(() => {
   extdir = parseADN(obj.ADN);
 });
-const gridSizeControl = fisier3.add(obj, "GridSize", 1, 20).onChange(() => redrawGrid());
+const gridSizeControl = fisier3.add(obj, "ZoomLevel", 1, 20).onChange(() => redrawGrid());
 fisier3.add(obj, "Speed", 1, 120, 1);
 fisier3.add(obj, "SpeedMultiplier", 1, 1000, 1);
 const IterationDisplay = fisier3.add(obj, "Iteration");
@@ -109,40 +109,99 @@ updateSyncedVector();
 
 const ctx = canvas.getContext("2d");
 
-function redrawGrid() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  state.forEach((colorIndex, key) => {
-    const [q, r] = key.split(',').map(Number);
-    drawHex(q, r, colorIndex);
-  });
-  drawHex(ant.q, ant.r, state.get(`${ant.q},${ant.r}`) || 0);
-}
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let offsetX = 0;
+let offsetY = 0;
+
+canvas.style.cursor = 'grab';
+canvas.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  lastMouseX = e.clientX;
+  lastMouseY = e.clientY;
+  canvas.style.cursor = 'grabbing';
+});
+
+canvas.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    const dx = e.clientX - lastMouseX;
+    const dy = e.clientY - lastMouseY;
+    offsetX += dx;
+    offsetY += dy;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+    redrawGrid();
+  }
+});
+
+canvas.addEventListener('mouseup', () => {
+  isDragging = false;
+  canvas.style.cursor = 'grab';
+});
+
+canvas.addEventListener('mouseleave', () => {
+  isDragging = false;
+  canvas.style.cursor = 'grab';
+});
 
 function axialToPixel(q, r) {
-  const size = obj.GridSize;
+  const size = obj.ZoomLevel;
   return {
-    x: canvas.width/2 + size * (Math.sqrt(3) * q + (Math.sqrt(3)/2 * r)),
-    y: canvas.height/2 + size * 1.5 * r
+    x: offsetX + canvas.width/2 + size * (Math.sqrt(3) * q + Math.sqrt(3)/2 * r),
+    y: offsetY + canvas.height/2 + size * 1.5 * r
   };
 }
 
-function drawHex(q, r, colorIndex) {
+const viewFolder = gui.addFolder("View");
+viewFolder.add({resetView: () => {
+  offsetX = 0;
+  offsetY = 0;
+  redrawGrid();
+}}, 'resetView').name("Reset View");
+
+function redrawGrid() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  const tempCtx = tempCanvas.getContext('2d');
+  
+  state.forEach((colorIndex, key) => {
+    const [q, r] = key.split(',').map(Number);
+    const {x, y} = axialToPixel(q, r);
+    if (x > -obj.ZoomLevel*2 && x < canvas.width + obj.ZoomLevel*2 && 
+        y > -obj.ZoomLevel*2 && y < canvas.height + obj.ZoomLevel*2) {
+      drawHexOnContext(tempCtx, q, r, colorIndex);
+    }
+  });
+  
+  drawHexOnContext(tempCtx, ant.q, ant.r, state.get(`${ant.q},${ant.r}`) || 0);
+  ctx.drawImage(tempCanvas, 0, 0);
+}
+
+function drawHexOnContext(context, q, r, colorIndex) {
   const safeIndex = colorIndex % colorVector.length;
   const [rVal, gVal, bVal] = colorVector[safeIndex];
   const color = `rgb(${Math.round(rVal * 255)},${Math.round(gVal * 255)},${Math.round(bVal * 255)})`;
   
   const {x, y} = axialToPixel(q, r);
-  ctx.beginPath();
+  context.beginPath();
   for (let i = 0; i < 6; i++) {
     const angle = i * Math.PI / 3;
-    const px = x + obj.GridSize * Math.cos(angle);
-    const py = y + obj.GridSize * Math.sin(angle);
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+    const px = x + obj.ZoomLevel * Math.cos(angle);
+    const py = y + obj.ZoomLevel * Math.sin(angle);
+    if (i === 0) context.moveTo(px, py);
+    else context.lineTo(px, py);
   }
-  ctx.closePath();
-  ctx.fillStyle = color;
-  ctx.fill();
+  context.closePath();
+  context.fillStyle = color;
+  context.fill();
+}
+
+function drawHex(q, r, colorIndex) {
+  drawHexOnContext(ctx, q, r, colorIndex);
 }
 
 const commandDeltas = {

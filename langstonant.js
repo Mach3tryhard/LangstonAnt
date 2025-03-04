@@ -32,11 +32,15 @@ const obj = {
   Turmite: function () {
     window.location.href = "turmite.html";
   },
+  HexagonalAnt: function () {
+    window.location.href = "hexant.html";
+  },
 };
 
 const fisier6 = gui.addFolder("Type");
 fisier6.add(obj, "LangstonAnt");
 fisier6.add(obj, "Turmite");
+fisier6.add(obj, "HexagonalAnt");
 const fisier3 = gui.addFolder("Settings");
 fisier3.add(obj, "Play");
 fisier3.add(obj, "ADN").onChange(() => {

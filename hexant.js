@@ -145,13 +145,13 @@ canvas.addEventListener('mouseleave', () => {
   canvas.style.cursor = 'grab';
 });
 
-function axialToPixel(q, r) {
+/*function axialToPixel(q, r) {
   const size = obj.ZoomLevel;
   return {
     x: offsetX + canvas.width/2 + size * (Math.sqrt(3) * q + Math.sqrt(3)/2 * r),
     y: offsetY + canvas.height/2 + size * 1.5 * r
   };
-}
+}*/
 
 const viewFolder = gui.addFolder("View");
 viewFolder.add({resetView: () => {
@@ -181,7 +181,38 @@ function redrawGrid() {
   ctx.drawImage(tempCanvas, 0, 0);
 }
 
+function axialToPixel(q, r) {
+  const size = obj.ZoomLevel;
+  const hexWidth = size * Math.sqrt(3);
+  const hexHeight = size * 1.5;
+  
+  return {
+    x: offsetX + canvas.width/2 + hexWidth * (q + r/2),
+    y: offsetY + canvas.height/2 + hexHeight * r
+  };
+}
+
 function drawHexOnContext(context, q, r, colorIndex) {
+  const size = obj.ZoomLevel;
+  const {x, y} = axialToPixel(q, r);
+  
+  const [rVal, gVal, bVal] = colorVector[colorIndex % colorVector.length];
+  const color = `rgb(${Math.round(rVal * 255)},${Math.round(gVal * 255)},${Math.round(bVal * 255)})`;
+
+  context.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const angle = i * Math.PI / 3 + Math.PI/6;
+    const px = x + size * Math.cos(angle);
+    const py = y + size * Math.sin(angle);
+    if (i === 0) context.moveTo(px, py);
+    else context.lineTo(px, py);
+  }
+  context.closePath();
+  context.fillStyle = color;
+  context.fill();
+}
+
+/*function drawHexOnContext(context, q, r, colorIndex) {
   const safeIndex = colorIndex % colorVector.length;
   const [rVal, gVal, bVal] = colorVector[safeIndex];
   const color = `rgb(${Math.round(rVal * 255)},${Math.round(gVal * 255)},${Math.round(bVal * 255)})`;
@@ -198,7 +229,7 @@ function drawHexOnContext(context, q, r, colorIndex) {
   context.closePath();
   context.fillStyle = color;
   context.fill();
-}
+}*/
 
 function drawHex(q, r, colorIndex) {
   drawHexOnContext(ctx, q, r, colorIndex);

@@ -24,11 +24,14 @@ const obj = {
   ZoomLevel: 5,
   Speed: 60,
   SpeedMultiplier: 1,
-  ADN: "L2NNL1L2L1",
+  ADN: "R1R2NUR2R1L2",
   Play: false,
   Iteration: 0,
   LangstonAnt: function () {
     window.location.href = "langstonant.html";
+  },
+  MultipleAnts: function () {
+    window.location.href = "NAnts.html";
   },
   Turmite: function () {
     window.location.href = "turmite.html";
@@ -73,6 +76,7 @@ const fisier6 = gui.addFolder("Type");
 fisier6.add(obj, "LangstonAnt");
 fisier6.add(obj, "Turmite");
 fisier6.add(obj, "HexagonalAnt");
+fisier6.add(obj, "MultipleAnts");
 const fisier3 = gui.addFolder("Settings");
 fisier3.add(obj, "Play");
 fisier3.add(obj, "ADN").onChange(() => {

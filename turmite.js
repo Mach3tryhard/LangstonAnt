@@ -31,6 +31,9 @@ const obj = {
   LangstonAnt: function () {
     window.location.href = "langstonant.html";
   },
+  MultipleAnts: function () {
+    window.location.href = "NAnts.html";
+  },
   Turmite: function () {
     window.location.href = "turmite.html";
   },
@@ -42,6 +45,7 @@ const fisier6 = gui.addFolder("Type");
 fisier6.add(obj, "LangstonAnt");
 fisier6.add(obj, "Turmite");
 fisier6.add(obj, "HexagonalAnt");
+fisier6.add(obj, "MultipleAnts");
 const settings = gui.addFolder("Settings");
 settings.add(obj, "Play");
 settings.add(obj, "GridSize", 1, 10, 1);

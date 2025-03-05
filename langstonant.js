@@ -54,7 +54,6 @@ fisier3.add(obj, "Speed", 1, 250, 1);
 fisier3.add(obj, "SpeedMultiplier", 1, 100000, 1);
 const IterationDisplay = fisier3.add(obj, "Iteration");
 
-
 const colorFolder = gui.addFolder("Color Vector");
 let colorVector = [
   [0.9019607843137255, 0.09803921568627451, 0.29411764705882354],
@@ -96,7 +95,7 @@ const state = new Uint8Array(gridWidth * gridHeight);
 
 var extdir = obj.ADN;
 
-const ant = { x: window.innerWidth/2, y: window.innerHeight/2, dir: 3 };
+const ant = { x: window.innerWidth / 2, y: window.innerHeight / 2, dir: 3 };
 
 let step = 0;
 
@@ -118,7 +117,7 @@ function update() {
     UpdateDisplayIteration(step / 1000000 + "M");
   else if (step > 1000 && step % 1000 == 0)
     UpdateDisplayIteration(step / 1000 + "K");
-  else if (step > 0 && step < 1000) UpdateDisplayIteration(step);
+  else if (step > 0 && step <= 1000) UpdateDisplayIteration(step);
 
   const CurrentColor = state[index];
   const nextColor = (CurrentColor + 1) % extdir.length;
@@ -132,6 +131,10 @@ function update() {
     ant.dir = (ant.dir + 1) % 4;
   } else if (extdir[CurrentColor] === "R") {
     ant.dir = (ant.dir + 3) % 4;
+  } else if (extdir[CurrentColor] === "U") {
+    ant.dir = (ant.dir + 2) % 4;
+  } else if (extdir[CurrentColor] === "N") {
+    ant.dir = (ant.dir + 0) % 4;
   }
 
   switch (ant.dir) {
@@ -148,7 +151,6 @@ function update() {
       ant.y -= obj.GridSize;
       break;
   }
-
 }
 
 function MaiMultPeMilisecunda() {

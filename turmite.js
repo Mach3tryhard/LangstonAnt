@@ -172,7 +172,7 @@ function update() {
     UpdateDisplayIteration(step / 1000000 + "M");
   else if (step > 1000 && step % 1000 == 0)
     UpdateDisplayIteration(step / 1000 + "K");
-  else if (step > 0 && step < 1000) UpdateDisplayIteration(step);
+  else if (step > 0 && step <= 1000) UpdateDisplayIteration(step);
 }
 
 function MaiMultPeMilisecunda() {
